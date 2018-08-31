@@ -36,8 +36,8 @@ typedef struct XactShardConnSet
 extern bool AllModificationsCommutative;
 extern bool EnableDeadlockPrevention;
 
-/* indicates whether the current execution is happening within a stored procedure */
-extern bool IsStoredProcedure;
+/* number of nested stored procedure call levels we are currently in */
+extern int StoredProcedureLevel;
 
 
 extern void CitusModifyBeginScan(CustomScanState *node, EState *estate, int eflags);

@@ -303,20 +303,22 @@ multi_ProcessUtility(PlannedStmt *pstmt,
 		 * Stored procedures are a bit strange in the sense that some statements
 		 * are not in a transaction block, but can be rolled back. We need to
 		 * make sure we send all statements in a transaction block. The
-		 * IsStoredProcedure flag signals this to the router executor.
+		 * StoredProcedureLevel variable signals this to the router executor
+		 * and indicates how deep in the call stack we are in case of nested
+		 * stored procedures.
 		 */
-		IsStoredProcedure = true;
+		StoredProcedureLevel += 1;
 
 		PG_TRY();
 		{
 			standard_ProcessUtility(pstmt, queryString, context,
 									params, queryEnv, dest, completionTag);
 
-			IsStoredProcedure = false;
+			StoredProcedureLevel -= 1;
 		}
 		PG_CATCH();
 		{
-			IsStoredProcedure = false;
+			StoredProcedureLevel -= 1;
 			PG_RE_THROW();
 		}
 		PG_END_TRY();
