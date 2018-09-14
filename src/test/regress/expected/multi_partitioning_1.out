@@ -541,6 +541,18 @@ SELECT tablename, indexname FROM pg_indexes WHERE tablename LIKE 'partitioning_t
 -----------+-----------
 (0 rows)
 
+-- test drop
+-- indexes created on parent table can only be dropped on parent table
+-- ie using the same index name
+-- following will fail
+DROP INDEX partitioning_test_2009_id_idx;
+ERROR:  index "partitioning_test_2009_id_idx" does not exist
+-- but dropping index on parent table will succeed
+DROP INDEX partitioning_index;
+ERROR:  index "partitioning_index" does not exist
+-- this index was already created on partition table
+DROP INDEX partitioning_2009_index;
+ERROR:  index "partitioning_2009_index" does not exist
 -- test add COLUMN
 -- add COLUMN to partitioned table
 ALTER TABLE partitioning_test ADD new_column int;

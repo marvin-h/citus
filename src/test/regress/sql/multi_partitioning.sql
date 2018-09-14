@@ -345,6 +345,18 @@ CREATE INDEX CONCURRENTLY partitioned_2010_index ON partitioning_test_2010(id);
 -- see index is created
 SELECT tablename, indexname FROM pg_indexes WHERE tablename LIKE 'partitioning_test%' ORDER BY indexname;
 
+-- test drop
+-- indexes created on parent table can only be dropped on parent table
+-- ie using the same index name
+-- following will fail
+DROP INDEX partitioning_test_2009_id_idx;
+
+-- but dropping index on parent table will succeed
+DROP INDEX partitioning_index;
+
+-- this index was already created on partition table
+DROP INDEX partitioning_2009_index;
+
 -- test add COLUMN
 -- add COLUMN to partitioned table
 ALTER TABLE partitioning_test ADD new_column int;
